@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "interface": "swd",
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "device": "STM32H753ZIT6",
+            "svdFile": "/opt/STM32CubeProgrammer/SVD/STM32H753.svd",
+            "gdbPath": "/usr/bin/gdb-multiarch",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32h7x.cfg"
+            ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 3
+            },
+            "stm32cubeprogrammer": "/opt/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+            "objdumpPath": "/usr/bin/arm-none-eabi-objdump",
+            "preLaunchTask": "CMake: build"
+        },
+        {
+            "name": "Attach",
+            "type": "cortex-debug",
+            "request": "attach",
+            "servertype": "openocd",
+            "interface": "swd",
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "device": "STM32H753ZIT6",
+            "svdFile": "/opt/STM32CubeProgrammer/SVD/STM32H753.svd",
+            "gdbPath": "/usr/bin/gdb-multiarch",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32h7x.cfg"
+            ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 3
+            },
+            "stm32cubeprogrammer": "/opt/STM32CubeProgrammer/bin/STM32_Programmer_CLI",
+            "objdumpPath": "/usr/bin/arm-none-eabi-objdump"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+# CMake build directory
+build/
+
+# CMake cache files
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+Makefile
+
+# Ninja intermediate files
+*.ninja
+
+# Compiled object files
+*.o
+*.obj
+
+# Executables
+*.elf
+*.hex
+*.out
+*.map
+
+# Libraries
+*.a
+*.lib
+
+# IDE-specific files
+.mxproject
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
