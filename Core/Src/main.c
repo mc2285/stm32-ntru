@@ -57,7 +57,7 @@ RNG_HandleTypeDef hrng;
 
 volatile uint8_t USBD_Connected = 0;
 
-char rx_buffer[2048], tx_buffer[2048], current_buff[64];
+__attribute__((section("._ram_d3"))) char rx_buffer[2048], tx_buffer[2048], current_buff[64];
 uint32_t n_received = 0, n_stored = 0;
 
 /* USER CODE END PV */

@@ -178,6 +178,25 @@ SECTIONS
   } >RAM_D3
 
   
+  ._ram_itcm :
+  {
+    . = ALIGN(4);
+  } >ITCMRAM
+  
+  ._ram_d1 :
+	{
+		. = ALIGN(8);
+	} >RAM_D1
+  
+  ._ram_d2 :
+  {
+    . = ALIGN(4);
+  } >RAM_D2
+
+  ._ram_d3 :
+  {
+    . = ALIGN(4);
+  } >RAM_D3
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
