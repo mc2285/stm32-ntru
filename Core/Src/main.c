@@ -35,6 +35,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define AT_COMMAND_LENGTH 4
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,7 +50,8 @@
 
 volatile uint8_t USBD_Connected = 0;
 
-uint8_t rx_buffer[64], tx_buffer[64];
+int8_t rx_buffer[2048], tx_buffer[2048], current_buff[64];
+uint32_t n_received = 0, n_stored = 0;
 
 /* USER CODE END PV */
 
@@ -113,9 +116,45 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    if (CDC_RXQueue_Dequeue(rx_buffer, sizeof(rx_buffer)) > 0)
+    n_received = CDC_RXQueue_Dequeue(current_buff, sizeof(current_buff));
+    if (n_received == 0)
+        continue;
+    if (n_stored + n_received < sizeof(rx_buffer))
     {
-      CDC_Transmit(rx_buffer, sizeof(rx_buffer));
+      memcpy(rx_buffer + n_stored, current_buff, n_received);
+      n_stored += n_received;
+    }
+    else
+    {
+      n_stored = 0;
+      CDC_TransmitString("ERROR: Buffer overflow\r\n");
+      continue;
+    }
+    // Check if we have a complete command
+    if (rx_buffer[n_stored - 1] == '\n')
+    {
+      rx_buffer[n_stored - 1] = '\0';
+      if (n_stored >= 2 && rx_buffer[n_stored - 2] == '\r')
+      {
+        rx_buffer[n_stored - 2] = '\0';
+      }
+      n_stored = 0;
+      if (strncmp(rx_buffer, "AT+S", AT_COMMAND_LENGTH) == 0)
+      {
+        HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_SET);
+        stpcpy(tx_buffer, "SET\r\n");
+      }
+      else if (strncmp(rx_buffer, "AT+R", AT_COMMAND_LENGTH) == 0)
+      {
+        HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_RESET);
+        stpcpy(tx_buffer, "RESET\r\n");
+      }
+      else
+      {
+        stpcpy(tx_buffer, "ERROR\r\n");
+      }
+
+      CDC_TransmitString(tx_buffer);
     }
     /* USER CODE END WHILE */
 

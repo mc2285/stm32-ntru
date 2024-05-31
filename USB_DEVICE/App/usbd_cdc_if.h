@@ -52,10 +52,12 @@
 /* Define size for the receive and transmit buffer over CDC */
 /* Powers of 2 are a good choice so that modulo operations become faster mask operations */
 /* If you overwrite the CDC_DataReceivedHandler and always process the data, APP_RX_DATA_SIZE should be set to 0 to save RAM */
-#define APP_RX_DATA_SIZE  2048
-#define APP_TX_DATA_SIZE  2048
+#define APP_RX_DATA_SIZE  512
+#define APP_TX_DATA_SIZE  512
 #define CDC_RX_DATA_HANDLED 1
 #define CDC_RX_DATA_NOTHANDLED 0
+
+#define APP_TX_TIMEOUT 1000
 
 #ifndef USE_USB_FS
 // if you are using USB_HS uncomment the following define
@@ -180,7 +182,7 @@ uint8_t CDC_IsComportOpen();
  */
 static inline uint8_t CDC_TransmitString(const char *string)
 {
-    return CDC_Transmit(string, strlen(string));
+    return CDC_TransmitTimed(string, strlen(string), APP_TX_TIMEOUT);
 }
 
 /* USER CODE END EXPORTED_FUNCTIONS */
