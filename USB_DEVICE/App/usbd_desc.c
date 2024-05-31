@@ -62,11 +62,11 @@
   * @{
   */
 
-#define USBD_VID     1155
+#define USBD_VID     0x0420
 #define USBD_LANGID_STRING     1033
 #define USBD_MANUFACTURER_STRING     "ABW"
-#define USBD_PID_FS     22336
-#define USBD_PRODUCT_STRING_FS     "STM32 Virtual ComPort"
+#define USBD_PID_FS     0x2137
+#define USBD_PRODUCT_STRING_FS     "STM32 NTRU Token"
 #define USBD_CONFIGURATION_STRING_FS     "CDC Config"
 #define USBD_INTERFACE_STRING_FS     "CDC Interface"
 

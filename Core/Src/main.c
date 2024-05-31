@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "usbd_cdc_if.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +47,8 @@
 /* USER CODE BEGIN PV */
 
 volatile uint8_t USBD_Connected = 0;
+
+uint8_t rx_buffer[64], tx_buffer[64];
 
 /* USER CODE END PV */
 
@@ -100,15 +104,19 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
+  memset(rx_buffer, 0, sizeof(rx_buffer));
+  memset(tx_buffer, 0, sizeof(tx_buffer));
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  
-    HAL_Delay(200);
-
+    if (CDC_RXQueue_Dequeue(rx_buffer, sizeof(rx_buffer)) > 0)
+    {
+      CDC_Transmit(rx_buffer, sizeof(rx_buffer));
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
