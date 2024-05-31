@@ -23,7 +23,10 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include <string.h>
 #include "usbd_cdc_if.h"
+#include "stm32h7xx_hal_hash.h"
+#include "stm32h7xx_hal_rng.h"
 
 /* USER CODE END Includes */
 
@@ -46,11 +49,15 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+HASH_HandleTypeDef hhash;
+
+RNG_HandleTypeDef hrng;
+
 /* USER CODE BEGIN PV */
 
 volatile uint8_t USBD_Connected = 0;
 
-int8_t rx_buffer[2048], tx_buffer[2048], current_buff[64];
+char rx_buffer[2048], tx_buffer[2048], current_buff[64];
 uint32_t n_received = 0, n_stored = 0;
 
 /* USER CODE END PV */
@@ -58,6 +65,8 @@ uint32_t n_received = 0, n_stored = 0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_HASH_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -105,6 +114,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USB_DEVICE_Init();
+  MX_HASH_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
   memset(rx_buffer, 0, sizeof(rx_buffer));
@@ -118,7 +129,7 @@ int main(void)
   {
     n_received = CDC_RXQueue_Dequeue(current_buff, sizeof(current_buff));
     if (n_received == 0)
-        continue;
+      continue;
     if (n_stored + n_received < sizeof(rx_buffer))
     {
       memcpy(rx_buffer + n_stored, current_buff, n_received);
@@ -227,6 +238,57 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+ * @brief HASH Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_HASH_Init(void)
+{
+
+  /* USER CODE BEGIN HASH_Init 0 */
+
+  /* USER CODE END HASH_Init 0 */
+
+  /* USER CODE BEGIN HASH_Init 1 */
+
+  /* USER CODE END HASH_Init 1 */
+  hhash.Init.DataType = HASH_DATATYPE_32B;
+  if (HAL_HASH_Init(&hhash) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN HASH_Init 2 */
+
+  /* USER CODE END HASH_Init 2 */
+}
+
+/**
+ * @brief RNG Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
 }
 
 /**
