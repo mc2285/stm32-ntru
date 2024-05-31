@@ -19,7 +19,7 @@ target_include_directories(stm32cubemx INTERFACE
     ../../Drivers/STM32H7xx_HAL_Driver/Inc
     ../../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
     ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc
-    ../../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc
+    ../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
     ../../Drivers/CMSIS/Device/ST/STM32H7xx/Include
     ../../Drivers/CMSIS/Include
 )
@@ -30,7 +30,7 @@ target_sources(stm32cubemx INTERFACE
     ../../Core/Src/stm32h7xx_hal_msp.c
     ../../USB_DEVICE/App/usb_device.c
     ../../USB_DEVICE/App/usbd_desc.c
-    ../../USB_DEVICE/App/usbd_custom_hid_if.c
+    ../../USB_DEVICE/App/usbd_cdc_if.c
     ../../USB_DEVICE/Target/usbd_conf.c
     ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.c
     ../../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd_ex.c
@@ -57,7 +57,7 @@ target_sources(stm32cubemx INTERFACE
     ../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c
     ../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c
     ../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c
-    ../../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Src/usbd_customhid.c
+    ../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c
     ../../Core/Src/sysmem.c
     ../../Core/Src/syscalls.c
     ../../startup_stm32h753xx.s

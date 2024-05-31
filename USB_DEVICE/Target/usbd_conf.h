@@ -36,6 +36,8 @@
 
 /* USER CODE BEGIN INCLUDE */
 
+extern volatile uint8_t USBD_Connected;
+
 /* USER CODE END INCLUDE */
 
 /** @addtogroup USBD_OTG_DRIVER
@@ -74,19 +76,6 @@
 #define USBD_LPM_ENABLED     1U
 /*---------- -----------*/
 #define USBD_SELF_POWERED     1U
-/*---------- -----------*/
-#define USBD_CUSTOMHID_OUTREPORT_BUF_SIZE     64U
-/*---------- -----------*/
-#define USBD_CUSTOM_HID_REPORT_DESC_SIZE     64U
-/*---------- -----------*/
-#define CUSTOM_HID_FS_BINTERVAL     0x5U
-/*---------- -----------*/
-/*---------- -----------*/
-
-/* #define USBD_CUSTOMHID_CTRL_REQ_GET_REPORT_ENABLED */
-/* #define USBD_CUSTOMHID_OUT_PREPARE_RECEIVE_DISABLED */
-/* #define USBD_CUSTOMHID_EP0_OUT_PREPARE_RECEIVE_DISABLED */
-/* #define USBD_CUSTOMHID_CTRL_REQ_COMPLETE_CALLBACK_ENABLED */
 
 /****************************************/
 /* #define for FS and HS identification */
