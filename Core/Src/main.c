@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 
 #include <string.h>
+
 #include "usbd_cdc_if.h"
 #include "stm32h7xx_hal_hash.h"
 #include "stm32h7xx_hal_rng.h"
@@ -39,6 +40,7 @@
 /* USER CODE BEGIN PD */
 
 #define AT_COMMAND_LENGTH 4
+#define M_BENCH 10
 
 /* USER CODE END PD */
 
@@ -150,19 +152,61 @@ int main(void)
         rx_buffer[n_stored - 2] = '\0';
       }
       n_stored = 0;
-      if (strncmp(rx_buffer, "AT+S", AT_COMMAND_LENGTH) == 0)
+
+      /* 
+       * AT command reference:
+       * AT+E <raw_data> encrypts the <raw_data> using ntru and returns encrypted <raw_data>
+       * AT+D <raw_data> decrypts the <raw_data> using ntru and returns decrypted <raw_data>
+       * AT+S <raw_data> sets the private key
+       * AT+B <raw_data> encrypts and decrypts <raw_data> N_BENCH times to help estimate performance
+       * AT+V returns info about the currently used variant of ntru
+       * AT+P returns the currently used public key as <raw_data>
+       * AT+K returns the currently used private key as <raw_data>
+       * AT+T returns the current HAL_Tick value[msec] as <number_string>; used to estimate performance
+       */
+ 
+      if (strncmp(rx_buffer, "AT+E ", AT_COMMAND_LENGTH + 1) == 0)
       {
-        HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_SET);
-        stpcpy(tx_buffer, "SET\r\n");
+        // For now just echo the <raw_data>
+        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
       }
-      else if (strncmp(rx_buffer, "AT+R", AT_COMMAND_LENGTH) == 0)
+      else if (strncmp(rx_buffer, "AT+D ", AT_COMMAND_LENGTH + 1) == 0)
       {
-        HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_RESET);
-        stpcpy(tx_buffer, "RESET\r\n");
+        // For now just echo the <raw_data>
+        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
+      }
+      else if (strncmp(rx_buffer, "AT+S ", AT_COMMAND_LENGTH + 1) == 0)
+      {
+        // For now just echo the <raw_data>
+        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
+      }
+      else if (strncmp(rx_buffer, "AT+B ", AT_COMMAND_LENGTH + 1) == 0)
+      {
+        // For now just echo the <raw_data>
+        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
+      }
+      else if (strncmp(rx_buffer, "AT+V", AT_COMMAND_LENGTH) == 0)
+      {
+        // A temporary placeholder
+        strcpy(tx_buffer, "NTRU-HPS2048509");
+      }
+      else if (strncmp(rx_buffer, "AT+P", AT_COMMAND_LENGTH) == 0)
+      {
+        // A temporary placeholder
+        strcpy(tx_buffer, "PUBLIC_KEY");
+      }
+      else if (strncmp(rx_buffer, "AT+K", AT_COMMAND_LENGTH) == 0)
+      {
+        // A temporary placeholder
+        strcpy(tx_buffer, "PRIVATE_KEY");
+      }
+      else if (strncmp(rx_buffer, "AT+T", AT_COMMAND_LENGTH) == 0)
+      {
+        utoa(HAL_GetTick(), tx_buffer, 10);
       }
       else
       {
-        stpcpy(tx_buffer, "ERROR\r\n");
+        strcpy(tx_buffer, "ERROR\r\n");
       }
 
       CDC_TransmitString(tx_buffer);

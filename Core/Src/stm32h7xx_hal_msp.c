@@ -85,7 +85,7 @@ void HAL_MspInit(void)
 void HAL_HASH_MspInit(HASH_HandleTypeDef* hhash)
 {
   /* USER CODE BEGIN HASH_MspInit 0 */
-
+  UNUSED(hhash);
   /* USER CODE END HASH_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_HASH_CLK_ENABLE();
@@ -104,7 +104,7 @@ void HAL_HASH_MspInit(HASH_HandleTypeDef* hhash)
 void HAL_HASH_MspDeInit(HASH_HandleTypeDef* hhash)
 {
   /* USER CODE BEGIN HASH_MspDeInit 0 */
-
+  UNUSED(hhash);
   /* USER CODE END HASH_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_HASH_CLK_DISABLE();
