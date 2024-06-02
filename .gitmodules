@@ -1,0 +1,3 @@
+[submodule "libntru-stm32"]
+	path = libntru-stm32
+	url = https://github.com/mc2285/libntru-stm32.git
