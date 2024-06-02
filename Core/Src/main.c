@@ -189,12 +189,13 @@ int main(void)
        * Unless otherwise specified, commands return "OK" on success and "ERROR" on failure
        *
        * AT+S <raw_data> signs the <hex_string> and returns the signed data as <hex_string>
-       * AT+M <hex_string> sets the private key
+       * AT+M <hex_string> sets the private key to the <hex_string> if supported by the algorithm
+       * AT+V <hex_string> verifies the <hex_string> and returns "OK" if the signature is valid, "ERROR" otherwise
        *
        * AT+B <hex_string> randomly alters and signs
        * the <hex_string> N_BENCH times and returns the average time in msec as <number_string>
        *
-       * AT+V returns info about the currently used algorithm as <string>
+       * AT+I returns info about the currently used algorithm as <string>
        * AT+P returns the currently used public key as <hex_string>
        * AT+K returns the currently used private key as <hex_string>
        * AT+T returns the current HAL_Tick value[msec] as <number_string>; used to estimate performance
@@ -208,6 +209,11 @@ int main(void)
       }
       else if (strncmp(rx_buffer, "AT+M ", AT_COMMAND_LENGTH + 1) == 0)
       {
+        if (strncmp(CRYPTO_ALGNAME, "NTRU", 4) == 0)
+        {
+          schedule_error_message();
+          continue;
+        }
         uint32_t len = strlen(rx_buffer + AT_COMMAND_LENGTH + 1);
         if (len != CRYPTO_SECRETKEYBYTES * 2 ||
             expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, sec_key, len) != 0)
@@ -215,7 +221,13 @@ int main(void)
           schedule_error_message();
           continue;
         }
-        // TODO: Implement key pair generation
+        // TODO: Implement public key generation
+        schedule_ok_message();
+        continue;
+      }
+      else if (strncmp(rx_buffer, "AT+V ", AT_COMMAND_LENGTH + 1) == 0)
+      {
+        // TODO: Implement signature verification
         schedule_ok_message();
         continue;
       }
@@ -224,7 +236,7 @@ int main(void)
         // For now just echo the <raw_data>
         strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
       }
-      else if (strncmp(rx_buffer, "AT+V", AT_COMMAND_LENGTH) == 0)
+      else if (strncmp(rx_buffer, "AT+I", AT_COMMAND_LENGTH) == 0)
       {
         strcpy(tx_buffer, CRYPTO_ALGNAME);
         strcat(tx_buffer, "\r\n");
