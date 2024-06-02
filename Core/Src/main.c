@@ -29,6 +29,8 @@
 #include "stm32h7xx_hal_hash.h"
 #include "stm32h7xx_hal_rng.h"
 
+#include "Gaussian-1024/api.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,8 +61,11 @@ RNG_HandleTypeDef hrng;
 
 volatile uint8_t USBD_Connected = 0;
 
-__attribute__((section("._ram_d3"))) char rx_buffer[2048], tx_buffer[2048], current_buff[64];
+__attribute__((section("._ram_d3"))) char rx_buffer[4096], tx_buffer[4096], current_buff[64];
+__attribute__((section("._ram_d1"))) unsigned char pub_key[CRYPTO_PUBLICKEYBYTES], sec_key[CRYPTO_SECRETKEYBYTES];
+
 uint32_t n_received = 0, n_stored = 0;
+uint8_t tr_flag = 0;
 
 /* USER CODE END PV */
 
@@ -70,6 +75,15 @@ static void MX_GPIO_Init(void);
 static void MX_HASH_Init(void);
 static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
+
+static void schedule_error_message(void)
+{
+  strcpy(tx_buffer, "ERROR\r\n");
+}
+static void schedule_ok_message(void)
+{
+  strcpy(tx_buffer, "OK\r\n");
+}
 
 /* USER CODE END PFP */
 
@@ -122,6 +136,9 @@ int main(void)
 
   memset(rx_buffer, 0, sizeof(rx_buffer));
   memset(tx_buffer, 0, sizeof(tx_buffer));
+  memset(current_buff, 0, sizeof(current_buff));
+  memset(pub_key, 0, sizeof(pub_key));
+  memset(sec_key, 0, sizeof(sec_key));
 
   /* USER CODE END 2 */
 
@@ -130,9 +147,15 @@ int main(void)
   while (1)
   {
     n_received = CDC_RXQueue_Dequeue(current_buff, sizeof(current_buff));
+    if (tr_flag)
+    {
+      CDC_TransmitString(tx_buffer);
+      tr_flag = 0;
+    }
     if (n_received == 0)
       continue;
-    if (n_stored + n_received < sizeof(rx_buffer))
+    // Check if the buffer can store expanded hex data
+    if ((n_stored + n_received)*2 < sizeof(rx_buffer))
     {
       memcpy(rx_buffer + n_stored, current_buff, n_received);
       n_stored += n_received;
@@ -153,29 +176,34 @@ int main(void)
       }
       n_stored = 0;
 
+      // A complete command was received - send a response
+      tr_flag = 1;
+
       /* 
        * AT command reference:
-       * AT+E <raw_data> encrypts the <raw_data> using ntru and returns encrypted <raw_data>
-       * AT+D <raw_data> decrypts the <raw_data> using ntru and returns decrypted <raw_data>
-       * AT+S <raw_data> sets the private key
-       * AT+B <raw_data> encrypts and decrypts <raw_data> N_BENCH times to help estimate performance
-       * AT+V returns info about the currently used variant of ntru
-       * AT+P returns the currently used public key as <raw_data>
-       * AT+K returns the currently used private key as <raw_data>
+       *
+       * All commands are case-insensitive
+       * Unless otherwise specified, commands return "OK" on success and "ERROR" on failure
+       * 
+       * AT+S <raw_data> signs the <hex_string> and returns the signed data as <hex_string>
+       * AT+M <hex_string> sets the private key
+       * 
+       * AT+B <hex_string> randomly alters and signs 
+       * the <hex_string> N_BENCH times and returns the average time in msec as <number_string>
+       * 
+       * AT+V returns info about the currently used algorithm as <string>
+       * AT+P returns the currently used public key as <hex_string>
+       * AT+K returns the currently used private key as <hex_string>
        * AT+T returns the current HAL_Tick value[msec] as <number_string>; used to estimate performance
+       * AT+G generates a new key pair
        */
  
-      if (strncmp(rx_buffer, "AT+E ", AT_COMMAND_LENGTH + 1) == 0)
+      if (strncmp(rx_buffer, "AT+S ", AT_COMMAND_LENGTH + 1) == 0)
       {
         // For now just echo the <raw_data>
         strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
       }
-      else if (strncmp(rx_buffer, "AT+D ", AT_COMMAND_LENGTH + 1) == 0)
-      {
-        // For now just echo the <raw_data>
-        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
-      }
-      else if (strncmp(rx_buffer, "AT+S ", AT_COMMAND_LENGTH + 1) == 0)
+      else if (strncmp(rx_buffer, "AT+M ", AT_COMMAND_LENGTH + 1) == 0)
       {
         // For now just echo the <raw_data>
         strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
@@ -188,7 +216,7 @@ int main(void)
       else if (strncmp(rx_buffer, "AT+V", AT_COMMAND_LENGTH) == 0)
       {
         // A temporary placeholder
-        strcpy(tx_buffer, "NTRU-HPS2048509");
+        strcpy(tx_buffer, CRYPTO_ALGNAME);
       }
       else if (strncmp(rx_buffer, "AT+P", AT_COMMAND_LENGTH) == 0)
       {
@@ -204,12 +232,18 @@ int main(void)
       {
         utoa(HAL_GetTick(), tx_buffer, 10);
       }
+      else if (strncmp(rx_buffer, "AT+G", AT_COMMAND_LENGTH) == 0)
+      {
+        // For now just return OK
+        schedule_ok_message();
+        continue;
+      }
       else
       {
-        strcpy(tx_buffer, "ERROR\r\n");
+        schedule_error_message();
+        continue;
       }
-
-      CDC_TransmitString(tx_buffer);
+      strcat(tx_buffer, "\r\n");
     }
     /* USER CODE END WHILE */
 
