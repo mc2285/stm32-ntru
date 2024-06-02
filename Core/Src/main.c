@@ -61,8 +61,8 @@ RNG_HandleTypeDef hrng;
 
 volatile uint8_t USBD_Connected = 0;
 
-__attribute__((section("._ram_d3"))) char rx_buffer[4096], tx_buffer[4096], current_buff[64];
-__attribute__((section("._ram_d1"))) unsigned char pub_key[CRYPTO_PUBLICKEYBYTES], sec_key[CRYPTO_SECRETKEYBYTES];
+__attribute__((section("._ram_d3"))) char rx_buffer[6144], tx_buffer[6144], current_buff[64],
+    pub_key[CRYPTO_PUBLICKEYBYTES], sec_key[CRYPTO_SECRETKEYBYTES];
 
 uint32_t n_received = 0, n_stored = 0;
 uint8_t tr_flag = 0;
@@ -84,6 +84,8 @@ static void schedule_ok_message(void)
 {
   strcpy(tx_buffer, "OK\r\n");
 }
+
+static int8_t encode_hex_string(char *src, char *out, uint32_t len);
 
 /* USER CODE END PFP */
 
@@ -155,7 +157,7 @@ int main(void)
     if (n_received == 0)
       continue;
     // Check if the buffer can store expanded hex data
-    if ((n_stored + n_received)*2 < sizeof(rx_buffer))
+    if ((n_stored + n_received) * 2 < sizeof(rx_buffer))
     {
       memcpy(rx_buffer + n_stored, current_buff, n_received);
       n_stored += n_received;
@@ -179,25 +181,25 @@ int main(void)
       // A complete command was received - send a response
       tr_flag = 1;
 
-      /* 
+      /*
        * AT command reference:
        *
        * All commands are case-insensitive
        * Unless otherwise specified, commands return "OK" on success and "ERROR" on failure
-       * 
+       *
        * AT+S <raw_data> signs the <hex_string> and returns the signed data as <hex_string>
        * AT+M <hex_string> sets the private key
-       * 
-       * AT+B <hex_string> randomly alters and signs 
+       *
+       * AT+B <hex_string> randomly alters and signs
        * the <hex_string> N_BENCH times and returns the average time in msec as <number_string>
-       * 
+       *
        * AT+V returns info about the currently used algorithm as <string>
        * AT+P returns the currently used public key as <hex_string>
        * AT+K returns the currently used private key as <hex_string>
        * AT+T returns the current HAL_Tick value[msec] as <number_string>; used to estimate performance
        * AT+G generates a new key pair
        */
- 
+
       if (strncmp(rx_buffer, "AT+S ", AT_COMMAND_LENGTH + 1) == 0)
       {
         // For now just echo the <raw_data>
@@ -215,18 +217,15 @@ int main(void)
       }
       else if (strncmp(rx_buffer, "AT+V", AT_COMMAND_LENGTH) == 0)
       {
-        // A temporary placeholder
         strcpy(tx_buffer, CRYPTO_ALGNAME);
       }
       else if (strncmp(rx_buffer, "AT+P", AT_COMMAND_LENGTH) == 0)
       {
-        // A temporary placeholder
-        strcpy(tx_buffer, "PUBLIC_KEY");
+        encode_hex_string(pub_key, tx_buffer, sizeof(pub_key));
       }
       else if (strncmp(rx_buffer, "AT+K", AT_COMMAND_LENGTH) == 0)
       {
-        // A temporary placeholder
-        strcpy(tx_buffer, "PRIVATE_KEY");
+        encode_hex_string(sec_key, tx_buffer, sizeof(sec_key));
       }
       else if (strncmp(rx_buffer, "AT+T", AT_COMMAND_LENGTH) == 0)
       {
@@ -537,6 +536,20 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+static int8_t encode_hex_string(char *src, char *out, uint32_t len)
+{
+  static char _hex_lookup[] = "0123456789ABCDEF";
+  while (len--)
+  {
+    *out++ = _hex_lookup[((unsigned char)*src) >> 4];
+    *out++ = _hex_lookup[((unsigned char)*src) & 0x0F];
+    src++;
+  }
+  // Null-terminate the string
+  *out = '\0';
+  return 0;
+}
 
 /* USER CODE END 4 */
 

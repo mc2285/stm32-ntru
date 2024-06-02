@@ -386,7 +386,7 @@ uint8_t CDC_Transmit(const void *Buf, uint32_t Len)
  * @param  TimeoutMs: maximum time to wait in ms to enqueue the data
  * @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
  */
-uint8_t CDC_TransmitTimed(const void* Buf, uint32_t Len, uint32_t TimeoutMs)
+uint8_t CDC_TransmitTimed(const char* Buf, uint32_t Len, uint32_t TimeoutMs)
 {
     if (TimeoutMs == 0) {
         return CDC_Transmit(Buf, Len);
@@ -406,7 +406,7 @@ uint8_t CDC_TransmitTimed(const void* Buf, uint32_t Len, uint32_t TimeoutMs)
         result = CDC_Transmit(Buf, enqueueSize);
         if (result == USBD_OK) {
             Len -= enqueueSize;
-            Buf += Len;
+            Buf += enqueueSize;
         }
 
     }

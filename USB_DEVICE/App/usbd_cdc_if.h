@@ -153,7 +153,7 @@
   */
 
 uint8_t CDC_Transmit(const void* Buf, uint32_t Len);
-uint8_t CDC_TransmitTimed(const void* Buf, uint32_t Len, uint32_t TimeoutMs);
+uint8_t CDC_TransmitTimed(const char* Buf, uint32_t Len, uint32_t TimeoutMs);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
 uint8_t CDC_IsBusy();
