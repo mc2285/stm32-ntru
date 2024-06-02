@@ -86,6 +86,7 @@ static void schedule_ok_message(void)
 }
 
 static int8_t encode_hex_string(char *src, char *out, uint32_t len);
+static int8_t expand_hex_string(char *src, char *out, uint32_t len);
 
 /* USER CODE END PFP */
 
@@ -157,7 +158,7 @@ int main(void)
     if (n_received == 0)
       continue;
     // Check if the buffer can store expanded hex data
-    if ((n_stored + n_received) * 2 < sizeof(rx_buffer))
+    if (n_stored + n_received < sizeof(rx_buffer))
     {
       memcpy(rx_buffer + n_stored, current_buff, n_received);
       n_stored += n_received;
@@ -207,8 +208,16 @@ int main(void)
       }
       else if (strncmp(rx_buffer, "AT+M ", AT_COMMAND_LENGTH + 1) == 0)
       {
-        // For now just echo the <raw_data>
-        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
+        uint32_t len = strlen(rx_buffer + AT_COMMAND_LENGTH + 1);
+        if (len != CRYPTO_SECRETKEYBYTES * 2 ||
+            expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, sec_key, len) != 0)
+        {
+          schedule_error_message();
+          continue;
+        }
+        // TODO: Implement key pair generation
+        schedule_ok_message();
+        continue;
       }
       else if (strncmp(rx_buffer, "AT+B ", AT_COMMAND_LENGTH + 1) == 0)
       {
@@ -218,6 +227,12 @@ int main(void)
       else if (strncmp(rx_buffer, "AT+V", AT_COMMAND_LENGTH) == 0)
       {
         strcpy(tx_buffer, CRYPTO_ALGNAME);
+        strcat(tx_buffer, "\r\n");
+        strcat(tx_buffer, "Public key length: ");
+        utoa(CRYPTO_PUBLICKEYBYTES, tx_buffer + strlen(tx_buffer), 10);
+        strcat(tx_buffer, "\r\n");
+        strcat(tx_buffer, "Private key length: ");
+        utoa(CRYPTO_SECRETKEYBYTES, tx_buffer + strlen(tx_buffer), 10);
       }
       else if (strncmp(rx_buffer, "AT+P", AT_COMMAND_LENGTH) == 0)
       {
@@ -548,6 +563,44 @@ static int8_t encode_hex_string(char *src, char *out, uint32_t len)
   }
   // Null-terminate the string
   *out = '\0';
+  return 0;
+}
+
+static inline int8_t hex_char_to_bin(char c, char *out)
+{
+  if (c >= '0' && c <= '9')
+    *out = (c - '0');
+  else if (c >= 'A' && c <= 'F')
+    *out = (c - 'A') + 10;
+  else if (c >= 'a' && c <= 'f')
+    *out = (c - 'a') + 10;
+  else
+  {
+    return -1;
+  }
+  return 0;
+}
+
+static int8_t expand_hex_string(char *src, char *out, uint32_t len)
+{
+  // It is unclear what side to pad
+  if (len < 2 || (len % 2) != 0)
+    return -1;
+
+  do
+  {
+    char value = 0;
+    if (hex_char_to_bin(*src++, &value) != 0)
+    {
+      return -1;
+    }
+    *out = value << 4;
+    if (hex_char_to_bin(*src++, &value) != 0)
+    {
+      return -1;
+    }
+    *out++ |= value;
+  } while (len -= 2);
   return 0;
 }
 
