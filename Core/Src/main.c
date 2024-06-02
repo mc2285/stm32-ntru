@@ -29,7 +29,7 @@
 #include "stm32h7xx_hal_hash.h"
 #include "stm32h7xx_hal_rng.h"
 
-#include "Gaussian-1024/api.h"
+#include "ntru_api_gauss.h"
 
 /* USER CODE END Includes */
 
@@ -260,7 +260,7 @@ int main(void)
       }
       else if (strncmp(rx_buffer, "AT+G", AT_COMMAND_LENGTH) == 0)
       {
-        // For now just return OK
+        crypto_sign_keypair((unsigned char*)pub_key, (unsigned char*)sec_key);
         schedule_ok_message();
         continue;
       }
