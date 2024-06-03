@@ -30,6 +30,7 @@
 #include "stm32h7xx_hal_rng.h"
 
 #include "ntru_api_gauss.h"
+#include "rng.h"
 
 /* USER CODE END Includes */
 
@@ -42,7 +43,7 @@
 /* USER CODE BEGIN PD */
 
 #define AT_COMMAND_LENGTH 4
-#define M_BENCH 10
+#define N_BENCH 20
 
 /* USER CODE END PD */
 
@@ -61,7 +62,11 @@ RNG_HandleTypeDef hrng;
 
 volatile uint8_t USBD_Connected = 0;
 
-__attribute__((section("._ram_d3"))) char rx_buffer[6144], tx_buffer[6144], current_buff[64],
+char hal_sourced_random_seed[crypto_stream_salsa20_KEYBYTES];
+
+char current_buff[64];
+
+__attribute__((section("._ram_d1"))) char rx_buffer[6144], tx_buffer[10240],
     pub_key[CRYPTO_PUBLICKEYBYTES], sec_key[CRYPTO_SECRETKEYBYTES];
 
 uint32_t n_received = 0, n_stored = 0;
@@ -83,6 +88,10 @@ static void schedule_error_message(void)
 static void schedule_ok_message(void)
 {
   strcpy(tx_buffer, "OK\r\n");
+}
+static void schedule_overflow_message(void)
+{
+  strcpy(tx_buffer, "OVERFLOW\r\n");
 }
 
 static int8_t encode_hex_string(char *src, char *out, uint32_t len);
@@ -143,6 +152,15 @@ int main(void)
   memset(pub_key, 0, sizeof(pub_key));
   memset(sec_key, 0, sizeof(sec_key));
 
+  // Generate a random seed for the random number generator
+  for (uint8_t i = 0; i < 8; i++)
+  {
+    HAL_RNG_GenerateRandomNumber(&hrng, (uint32_t *)(hal_sourced_random_seed + i * 4));
+  }
+
+  // Generate an initial key pair
+  crypto_sign_keypair((unsigned char *)pub_key, (unsigned char *)sec_key);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -166,7 +184,8 @@ int main(void)
     else
     {
       n_stored = 0;
-      CDC_TransmitString("ERROR: Buffer overflow\r\n");
+      schedule_overflow_message();
+      tr_flag = 1;
       continue;
     }
     // Check if we have a complete command
@@ -186,14 +205,15 @@ int main(void)
        * AT command reference:
        *
        * All commands are case-insensitive
-       * Unless otherwise specified, commands return "OK" on success and "ERROR" on failure
+       * Unless otherwise specified, commands return "OK" on success, "ERROR" on failure
+       * and "OVERFLOW" when too much data is supplied
        *
        * AT+S <raw_data> signs the <hex_string> and returns the signed data as <hex_string>
        * AT+M <hex_string> sets the private key to the <hex_string> if supported by the algorithm
-       * AT+V <hex_string> verifies the <hex_string> and returns "OK" if the signature is valid, "ERROR" otherwise
+       * AT+V <hex_string> verifies the <hex_string> signature
        *
-       * AT+B <hex_string> randomly alters and signs
-       * the <hex_string> N_BENCH times and returns the average time in msec as <number_string>
+       * AT+B signs the pub_key (data signed does not matter, just benchmarking)
+       * N_BENCH times and returns the average time in msec as <number_string>
        *
        * AT+I returns info about the currently used algorithm as <string>
        * AT+P returns the currently used public key as <hex_string>
@@ -204,8 +224,20 @@ int main(void)
 
       if (strncmp(rx_buffer, "AT+S ", AT_COMMAND_LENGTH + 1) == 0)
       {
-        // For now just echo the <raw_data>
-        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
+        uint64_t len = strlen(rx_buffer + AT_COMMAND_LENGTH + 1);
+        if (expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, rx_buffer, len) != 0)
+        {
+          schedule_error_message();
+          continue;
+        }
+        len /= 2;
+        if ((len + CRYPTO_BYTES) * 2 > sizeof(tx_buffer) || len + CRYPTO_BYTES > sizeof(rx_buffer))
+        {
+          schedule_overflow_message();
+          continue;
+        }
+        crypto_sign((unsigned char *)rx_buffer, &len, (unsigned char *)rx_buffer, len, (unsigned char *)sec_key);
+        encode_hex_string(rx_buffer, tx_buffer, len);
       }
       else if (strncmp(rx_buffer, "AT+M ", AT_COMMAND_LENGTH + 1) == 0)
       {
@@ -218,7 +250,7 @@ int main(void)
         if (len != CRYPTO_SECRETKEYBYTES * 2 ||
             expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, sec_key, len) != 0)
         {
-          schedule_error_message();
+          schedule_overflow_message();
           continue;
         }
         // TODO: Implement public key generation
@@ -231,10 +263,16 @@ int main(void)
         schedule_ok_message();
         continue;
       }
-      else if (strncmp(rx_buffer, "AT+B ", AT_COMMAND_LENGTH + 1) == 0)
+      else if (strncmp(rx_buffer, "AT+B", AT_COMMAND_LENGTH + 1) == 0)
       {
-        // For now just echo the <raw_data>
-        strcpy(tx_buffer, rx_buffer + AT_COMMAND_LENGTH + 1);
+        uint64_t len;
+        uint32_t start = HAL_GetTick();
+        for (uint8_t i = 0; i < N_BENCH; i++)
+        {
+          // Uses the public key as the data to sign
+          crypto_sign((unsigned char *)rx_buffer, &len, (unsigned char *)pub_key, sizeof(pub_key), (unsigned char *)sec_key);
+        }
+        utoa((HAL_GetTick() - start) / N_BENCH, tx_buffer, 10);
       }
       else if (strncmp(rx_buffer, "AT+I", AT_COMMAND_LENGTH) == 0)
       {
@@ -260,7 +298,7 @@ int main(void)
       }
       else if (strncmp(rx_buffer, "AT+G", AT_COMMAND_LENGTH) == 0)
       {
-        crypto_sign_keypair((unsigned char*)pub_key, (unsigned char*)sec_key);
+        crypto_sign_keypair((unsigned char *)pub_key, (unsigned char *)sec_key);
         schedule_ok_message();
         continue;
       }
