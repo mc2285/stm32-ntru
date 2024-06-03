@@ -220,6 +220,9 @@ int main(void)
        * AT+K returns the currently used private key as <hex_string>
        * AT+T returns the current HAL_Tick value[msec] as <number_string>; used to estimate performance
        * AT+G generates a new key pair
+       * 
+       * AT+R benchmarks key generation over N_BENCH iterations
+       * and returns the average time in msec as <number_string>
        */
 
       if (strncmp(rx_buffer, "AT+S ", AT_COMMAND_LENGTH + 1) == 0)
@@ -301,6 +304,15 @@ int main(void)
         crypto_sign_keypair((unsigned char *)pub_key, (unsigned char *)sec_key);
         schedule_ok_message();
         continue;
+      }
+      else if (strncmp(rx_buffer, "AT+R", AT_COMMAND_LENGTH) == 0)
+      {
+        uint32_t start = HAL_GetTick();
+        for (uint8_t i = 0; i < N_BENCH; i++)
+        {
+          crypto_sign_keypair((unsigned char *)pub_key, (unsigned char *)sec_key);
+        }
+        utoa((HAL_GetTick() - start) / N_BENCH, tx_buffer, 10);
       }
       else
       {
