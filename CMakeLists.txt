@@ -48,7 +48,8 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    libntru-stm32/pqNTRUSign/Gaussian-1024/ntru_api_gauss.c
+    # libntru-stm32/pqNTRUSign/Gaussian-1024/ntru_api_gauss.c
+    libntru-stm32/pqNTRUSign/Uniform-1024/ntru_api_uni.c
     libntru-stm32/pqNTRUSign/common/crypto_hash_sha512.c
     libntru-stm32/pqNTRUSign/common/crypto_stream_salsa20.c
     libntru-stm32/pqNTRUSign/common/DGS.c
@@ -65,7 +66,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
-    libntru-stm32/pqNTRUSign/Gaussian-1024
+    # libntru-stm32/pqNTRUSign/Gaussian-1024
+    libntru-stm32/pqNTRUSign/Uniform-1024
     libntru-stm32/pqNTRUSign/common
 )
 

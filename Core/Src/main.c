@@ -29,7 +29,7 @@
 #include "stm32h7xx_hal_hash.h"
 #include "stm32h7xx_hal_rng.h"
 
-#include "ntru_api_gauss.h"
+#include "ntru_api_uni.h"
 #include "rng.h"
 
 /* USER CODE END Includes */
