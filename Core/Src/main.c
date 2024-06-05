@@ -66,7 +66,7 @@ char hal_sourced_random_seed[crypto_stream_salsa20_KEYBYTES];
 
 char current_buff[64];
 
-__attribute__((section("._ram_d1"))) char rx_buffer[6144], tx_buffer[10240],
+__attribute__((section("._ram_d1"))) char rx_buffer[10240], tx_buffer[10240],
     pub_key[CRYPTO_PUBLICKEYBYTES], sec_key[CRYPTO_SECRETKEYBYTES];
 
 uint32_t n_received = 0, n_stored = 0;
@@ -206,7 +206,7 @@ int main(void)
        *
        * All commands are case-insensitive
        * Unless otherwise specified, commands return "OK" on success, "ERROR" on failure
-       * and "OVERFLOW" when too much data is supplied
+       * and "OVERFLOW" on data size issues and receive buffer overflow
        *
        * AT+S <raw_data> signs the <hex_string> and returns the signed data as <hex_string>
        * AT+M <hex_string> sets the private key to the <hex_string> if supported by the algorithm
@@ -241,6 +241,20 @@ int main(void)
         }
         crypto_sign((unsigned char *)rx_buffer, &len, (unsigned char *)rx_buffer, len, (unsigned char *)sec_key);
         encode_hex_string(rx_buffer, tx_buffer, len);
+
+        /*
+         * For some combinations of input data and keys, the signing function
+         * may generate a signature that is invalid. This is how the algorithm
+         * works and is mentioned in the NTRU documentation. To handle this, we
+         * will try to verify the signature and if it fails, we will return an
+         * error message.
+         */
+
+        if (crypto_sign_open((unsigned char *)rx_buffer, &len, (unsigned char *)rx_buffer, len, (unsigned char *)pub_key) != 0)
+        {
+          schedule_error_message();
+          continue;
+        }
       }
       else if (strncmp(rx_buffer, "AT+M ", AT_COMMAND_LENGTH + 1) == 0)
       {
@@ -262,11 +276,25 @@ int main(void)
       }
       else if (strncmp(rx_buffer, "AT+V ", AT_COMMAND_LENGTH + 1) == 0)
       {
-        // TODO: Implement signature verification
-        schedule_ok_message();
-        continue;
+        uint64_t len = strlen(rx_buffer + AT_COMMAND_LENGTH + 1);
+        if (len <= CRYPTO_BYTES * 2 || expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, rx_buffer, len) != 0)
+        {
+          schedule_overflow_message();
+          continue;
+        }
+        len /= 2;
+        if (crypto_sign_open((unsigned char *)rx_buffer, &len, (unsigned char *)rx_buffer, len, (unsigned char *)pub_key) != 0)
+        {
+          schedule_error_message();
+          continue;
+        }
+        else
+        {
+          schedule_ok_message();
+          continue;
+        }
       }
-      else if (strncmp(rx_buffer, "AT+B", AT_COMMAND_LENGTH + 1) == 0)
+      else if (strncmp(rx_buffer, "AT+B", AT_COMMAND_LENGTH) == 0)
       {
         uint64_t len;
         uint32_t start = HAL_GetTick();
@@ -286,6 +314,10 @@ int main(void)
         strcat(tx_buffer, "\r\n");
         strcat(tx_buffer, "Private key length: ");
         utoa(CRYPTO_SECRETKEYBYTES, tx_buffer + strlen(tx_buffer), 10);
+        strcat(tx_buffer, "\r\n");
+        strcat(tx_buffer, "Maximum message length: ");
+        utoa(sizeof(rx_buffer) / 2 - CRYPTO_BYTES - AT_COMMAND_LENGTH - 1 ,
+             tx_buffer + strlen(tx_buffer), 10);
       }
       else if (strncmp(rx_buffer, "AT+P", AT_COMMAND_LENGTH) == 0)
       {
