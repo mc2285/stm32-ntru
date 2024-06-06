@@ -62,13 +62,13 @@ application with the cryptographic library.
 
 | Compiler Preset | Variant         | Flash (bytes) | DTCRAM (bytes) | BUF RAM (bytes) | Total RAM (bytes) |
 |-----------------|-----------------|---------------|----------------|-----------------|-------------------|
-| Release         | Gaussian distr. | 57696         | 8344           | 225856          | 234200            |
-| MinSizeRel      | Gaussian distr. | 52316         | 8344           | 225853          | 234197            |
-| Release         | Uniform distr.  | 57340         | 8344           | 225856          | 234200            |
-| MinSizeRel      | Uniform distr.  | 52204         | 8344           | 225853          | 234197            |
+| Release         | Gaussian distr. | 73696         | 8344           | 225856          | 234200            |
+| MinSizeRel      | Gaussian distr. | 68316         | 8344           | 225853          | 234197            |
+| Release         | Uniform distr.  | 73340         | 8344           | 225856          | 234200            |
+| MinSizeRel      | Uniform distr.  | 68204         | 8344           | 225853          | 234197            |
 
 As one may see, the differences between the variants are not significant and the MinSizeRel
-preset obviously uses less FLASH memory. On average ~235kB of RAM and ~55kB of FLASH memory is used
+preset obviously uses less FLASH memory. On average ~235kB of RAM and ~70kB of FLASH memory is used
 by the cryptographic library.
 
 ### Detailed FLASH usage per function
@@ -143,7 +143,7 @@ by the cryptographic library.
 As one can easily see, the SHA512 implementation takes the most FLASH memory.
 Using the hardware hash module would be a good idea to reduce the memory footprint.
 
-The resulting size would be arround 15kB.
+The resulting size would be arround 15kB for functions + 16kB of constants defined in the `param.c` file.
 
 #### Script used
 
