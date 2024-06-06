@@ -48,27 +48,22 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    # libntru-stm32/pqNTRUSign/Gaussian-1024/ntru_api_gauss.c
-    libntru-stm32/pqNTRUSign/Uniform-1024/ntru_api_uni.c
-    libntru-stm32/pqNTRUSign/common/crypto_hash_sha512.c
-    libntru-stm32/pqNTRUSign/common/crypto_stream_salsa20.c
-    libntru-stm32/pqNTRUSign/common/DGS.c
-    libntru-stm32/pqNTRUSign/common/fastrandombytes.c
-    libntru-stm32/pqNTRUSign/common/misc.c
-    libntru-stm32/pqNTRUSign/common/NTT.c
-    libntru-stm32/pqNTRUSign/common/packing.c
-    libntru-stm32/pqNTRUSign/common/param.c
-    libntru-stm32/pqNTRUSign/common/poly.c
-    libntru-stm32/pqNTRUSign/common/pqNTRUSign.c
-    libntru-stm32/pqNTRUSign/common/rng.c
+    libntru-stm32/falcon512/api.c
+    libntru-stm32/falcon512/codec.c
+    libntru-stm32/falcon512/common.c
+    libntru-stm32/falcon512/fft.c
+    libntru-stm32/falcon512/fpr.c
+    libntru-stm32/falcon512/keygen.c
+    libntru-stm32/falcon512/rng.c
+    libntru-stm32/falcon512/shake.c
+    libntru-stm32/falcon512/sign.c
+    libntru-stm32/falcon512/vrfy.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
-    # libntru-stm32/pqNTRUSign/Gaussian-1024
-    libntru-stm32/pqNTRUSign/Uniform-1024
-    libntru-stm32/pqNTRUSign/common
+    libntru-stm32/falcon512
 )
 
 # Add project symbols (macros)

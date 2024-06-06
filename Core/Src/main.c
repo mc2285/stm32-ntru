@@ -29,8 +29,7 @@
 #include "stm32h7xx_hal_hash.h"
 #include "stm32h7xx_hal_rng.h"
 
-#include "ntru_api_uni.h"
-#include "rng.h"
+#include "api.h"
 
 /* USER CODE END Includes */
 
@@ -61,8 +60,6 @@ RNG_HandleTypeDef hrng;
 /* USER CODE BEGIN PV */
 
 volatile uint8_t USBD_Connected = 0;
-
-char hal_sourced_random_seed[crypto_stream_salsa20_KEYBYTES];
 
 char current_buff[64];
 
@@ -152,12 +149,6 @@ int main(void)
   memset(pub_key, 0, sizeof(pub_key));
   memset(sec_key, 0, sizeof(sec_key));
 
-  // Generate a random seed for the random number generator
-  for (uint8_t i = 0; i < 8; i++)
-  {
-    HAL_RNG_GenerateRandomNumber(&hrng, (uint32_t *)(hal_sourced_random_seed + i * 4));
-  }
-
   // Generate an initial key pair
   crypto_sign_keypair((unsigned char *)pub_key, (unsigned char *)sec_key);
 
@@ -244,8 +235,7 @@ int main(void)
 
         /*
          * For some combinations of input data and keys, the signing function
-         * may generate a signature that is invalid. This is how the algorithm
-         * works and is mentioned in the NTRU documentation. To handle this, we
+         * may generate a signature that is invalid. To handle this, we
          * will try to verify the signature and if it fails, we will return an
          * error message.
          */
@@ -695,6 +685,30 @@ static int8_t expand_hex_string(char *src, char *out, uint32_t len)
     }
     *out++ |= value;
   } while (len -= 2);
+  return 0;
+}
+
+void randombytes_init(unsigned char *entropy_input,
+	unsigned char *personalization_string,
+	int security_strength)
+{
+  UNUSED(entropy_input);
+  UNUSED(personalization_string);
+  UNUSED(security_strength);
+}
+
+int randombytes(unsigned char *x, unsigned long long xlen)
+{
+  uint32_t random;
+  uint8_t *ptr = (uint8_t *)&random;
+  for (unsigned long long i = 0; i < xlen; i++)
+  {
+    if (i % 4 == 0)
+    {
+      HAL_RNG_GenerateRandomNumber(&hrng, &random);
+    }
+    x[i] = ptr[i % 4];
+  }
   return 0;
 }
 
