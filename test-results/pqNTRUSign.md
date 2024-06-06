@@ -162,5 +162,7 @@ Researching the reason behind this behaviour is out of the scope of this project
 
 ### Lack of memory safety in `crypto_sign_open()`
 
-So apparently the `crypto_sign_open()` function will cause out of bounds memory access if anything is found
-after the padding block of `0004`'s. Won't fix, sorry.
+So apparently the `crypto_sign_open()` function will cause out of bounds memory access if the supplied
+signature is misaligned. This issue has been fixed in `unpack_public_key()` by adding a check
+if the returned pointer is not `NULL`. I hope there are no more eastereggs like this one
+(it bricked the device until a full reflashing was performed).

@@ -220,7 +220,7 @@ int main(void)
        * AT+K returns the currently used private key as <hex_string>
        * AT+T returns the current HAL_Tick value[msec] as <number_string>; used to estimate performance
        * AT+G generates a new key pair
-       * 
+       *
        * AT+R benchmarks key generation over N_BENCH iterations
        * and returns the average time in msec as <number_string>
        */
@@ -316,7 +316,7 @@ int main(void)
         utoa(CRYPTO_SECRETKEYBYTES, tx_buffer + strlen(tx_buffer), 10);
         strcat(tx_buffer, "\r\n");
         strcat(tx_buffer, "Maximum message length: ");
-        utoa(sizeof(rx_buffer) / 2 - CRYPTO_BYTES - AT_COMMAND_LENGTH - 1 ,
+        utoa(sizeof(rx_buffer) / 2 - CRYPTO_BYTES - AT_COMMAND_LENGTH - 1,
              tx_buffer + strlen(tx_buffer), 10);
       }
       else if (strncmp(rx_buffer, "AT+P", AT_COMMAND_LENGTH) == 0)
