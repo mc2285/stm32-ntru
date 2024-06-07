@@ -42,7 +42,7 @@
 /* USER CODE BEGIN PD */
 
 #define AT_COMMAND_LENGTH 4
-#define N_BENCH 20
+#define N_BENCH 50
 
 /* USER CODE END PD */
 

@@ -1,4 +1,4 @@
-# Benchmarks for pqNTRUSign
+# Benchmarks for Falcon-512
 
 ## Setup
 

@@ -48,22 +48,22 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    libntru-stm32/falcon512/api.c
-    libntru-stm32/falcon512/codec.c
-    libntru-stm32/falcon512/common.c
-    libntru-stm32/falcon512/fft.c
-    libntru-stm32/falcon512/fpr.c
-    libntru-stm32/falcon512/keygen.c
-    libntru-stm32/falcon512/rng.c
-    libntru-stm32/falcon512/shake.c
-    libntru-stm32/falcon512/sign.c
-    libntru-stm32/falcon512/vrfy.c
+    libntru-stm32/falcon1024/api.c
+    libntru-stm32/falcon1024/codec.c
+    libntru-stm32/falcon1024/common.c
+    libntru-stm32/falcon1024/fft.c
+    libntru-stm32/falcon1024/fpr.c
+    libntru-stm32/falcon1024/keygen.c
+    libntru-stm32/falcon1024/rng.c
+    libntru-stm32/falcon1024/shake.c
+    libntru-stm32/falcon1024/sign.c
+    libntru-stm32/falcon1024/vrfy.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
-    libntru-stm32/falcon512
+    libntru-stm32/falcon1024
 )
 
 # Add project symbols (macros)
