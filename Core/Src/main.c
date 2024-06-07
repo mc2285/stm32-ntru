@@ -689,8 +689,8 @@ static int8_t expand_hex_string(char *src, char *out, uint32_t len)
 }
 
 void randombytes_init(unsigned char *entropy_input,
-	unsigned char *personalization_string,
-	int security_strength)
+                      unsigned char *personalization_string,
+                      int security_strength)
 {
   UNUSED(entropy_input);
   UNUSED(personalization_string);
