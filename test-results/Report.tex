@@ -1,0 +1,720 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\author{Marcin Cieślak}
+\date{2024}
+\title{Post-quantum cryptography on ARM Cortex-M7: a report}
+
+\begin{document}
+
+\hypertarget{title}{%
+\section{Post-quantum cryptography on ARM Cortex M7: a report}
+\label{title}}
+
+The aim of this report is to evaluate the results of an experiment regarding implementing PQ cryptography
+in an embedded system and to analyse whether it is currently feasible resource-wise to employ such mechanisms in a practical application.
+
+\hypertarget{abstract}{%
+\section{Abstract}
+\label{abstract}}
+
+With the introduction of Shor's algorithm\footnote{\url{https://en.wikipedia.org/wiki/Shor\%27s_algorithm}}
+the long-term future of currently used public-key signature schemes relying on either the large integer prime factorisation problem\footnote{\url{https://en.wikipedia.org/wiki/Integer_factorization}} or
+elliptic curve properties\footnote{\url{https://en.wikipedia.org/wiki/Discrete_logarithm}} is uncertain.
+Although there are currently no practical devices capable of employing
+Shor's algorithm to solve any of the aforementioned problems, it is probable that they may be created one day.
+This in turn creates need for future-proof algorithms that are known to be resistant to Shor's algorithm shall a quantum computer powerful enough to threaten the status-quo of cryptography be ever built.
+
+\hypertarget{urgency}{%
+\subsection{Urgency of the matter}\label{urgency}}
+
+Even though one may feel tempted to assume that, given that the threat from quantum computers is distant,
+there is currently no need to bother. While such an assumption is not necessarily wrong for most
+industrial and consumer market applications, state-level secrets and military applications might require
+protection from decryption of past cipher-texts in the future\footnote{\url{https://en.wikipedia.org/wiki/Harvest_now,_decrypt_later}}.
+What is more, this future may actually be less distant than it seems\footnote{\url{https://semiengineering.com/the-race-toward-quantum-advantage}}.
+
+\hypertarget{possible-resolutions}{%
+\subsection{Solutions at hand}\label{possible-resolutions}}
+
+Even though practical quantum computers are yet to arrive, cryptography resistant to Shor's algorithm is already out in the wild. A performance and key size penalty relative to ECDSA is
+present\footnote{\url{https://blog.cloudflare.com/nist-post-quantum-surprise\#digital-signatures}},
+although it is manageable especially for algorithms based on latices, specifically pqNTRUSign, CRYSTALS-Dilithium\footnote{\url{https://www.pq-crystals.org/dilithium/index.shtml}} and Falcon\footnote{\url{https://falcon-sign.info/}}.
+Out of them, Dilithium and Falcon where selected by NIST\footnote{\url{https://en.wikipedia.org/wiki/NIST_Post-Quantum_Cryptography_Standardization\#Selected_Algorithms_2022}} as early variants of NTRUSign
+had serious security flaws\footnote{\url{https://en.wikipedia.org/wiki/NTRUSign\#Security}} which brought
+attention to how tricky it is to properly choose NTRUSign's parameters and how serious the consequences
+of bad choices in that field to the overall security of the system might be (private key recovery was possible with as low as 400 signatures).
+While it may seem trivial, having a degree of resistance to common mistakes is an important part of a reliable cryptographic system as they are bound to happen (and e.g. ED25519 is designed with robust
+safeguards against broken PRNG's in mind\footnote{\url{https://en.wikipedia.org/wiki/EdDSA\#Secure_coding}}).
+
+\hypertarget{embedded-options}{%
+\subsection{Options for the embedded world}\label{embedded-options}}
+
+The strongest constrain in the world of embedded devices is memory. Operations with high computational
+cost can be offloaded to special-case peripheral modules (which will arise sooner or later as it is
+currently the case for AES and SHA even in lower-end micro-controllers) or run over time between other
+tasks if possible. On the other hand, expanding memory creates additional costs, complexity, reduces
+performance and introduces additional failure points.
+
+Due to the above factors CRYSTALS-Dilithium and SPHINCS+, although certainly possible to implement even
+for the slightly smaller Cortex M4 cores\footnote{\url{https://github.com/mupq/pqm4}}, are in an
+extremely disadvantageous position owing to the respectively large and gargantuan amounts of memory
+required to hold just the computed signature. The author of this document acknowledges that CRYSTALS-Dilithium is the fastest algorithm and that SPHINCS+ provides methods which allow not to hold the whole
+signature in memory at once. Regardless of that, algorithms which have no need for workarounds to this
+problem are more appealing and were therefore considered in the experiment.
+
+\hypertarget{the-experiment}{%
+\section{The experiment}
+\label{the-experiment}}
+
+\hypertarget{benchmarks-for-pqntrusign}{%
+\section{Benchmarks for pqNTRUSign}\label{benchmarks-for-pqntrusign}}
+
+\hypertarget{setup}{%
+\subsection{Setup}\label{setup}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Device:} NUCLEO-H753ZI
+\item
+  \textbf{Compiler:} arm-none-eabi-gcc 10.3.1
+\item
+  \textbf{Public key size:} 2065
+\item
+  \textbf{Private key size:} 2604
+\item
+  \textbf{AES equivalent:} 128 \textit{(NIST 1)}
+\end{itemize}
+
+Lower key sizes will not be tested as the cryptography already
+has security concerns.
+See relevant Wikipedia article on
+\href{https://en.wikipedia.org/wiki/NTRUSign}{NTRUSign}.
+
+To communicate with the device, a serial terminal is required. On Linux
+the device is usually located at \texttt{/dev/ttyACMx}. See
+\texttt{journalctl\ -efn10} for the exact device name.
+
+Example command to start a serial terminal:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{picocom}\NormalTok{ {-}{-}omap crcrlf {-}{-}echo {-}b 115200 /dev/ttyACM0}
+\end{Highlighting}
+\end{Shaded}
+
+All the \texttt{AT+x} commands are expected to be terminated with a
+newline or carret return \textbf{and} newline.
+
+\hypertarget{key-generation-over-25-runs}{%
+\subsection{Key generation over 25
+runs}\label{key-generation-over-25-runs}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Compiler Preset & Time (ms)\tabularnewline
+\midrule
+\endhead
+Release & 818\tabularnewline
+MinSizeRel & 875\tabularnewline
+Debug & 1465\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{running-the-keygen-benchmark}{%
+\subsubsection{Running the keygen
+benchmark}\label{running-the-keygen-benchmark}}
+
+In a serial terminal, run the following command:
+
+\texttt{AT+R}
+
+\hypertarget{signature-generation-over-25-runs}{%
+\subsection{Signature generation over 25
+runs}\label{signature-generation-over-25-runs}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+Variant & Compiler Preset & Time (ms)\tabularnewline
+\midrule
+\endhead
+Gaussian distr. & Debug & 7596\tabularnewline
+Gaussian distr. & MinSizeRel & 2029\tabularnewline
+Gaussian distr. & Release & 1598\tabularnewline
+Uniform distr. & Debug & 2749\tabularnewline
+Uniform distr. & MinSizeRel & 627\tabularnewline
+Uniform distr. & Release & 522\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{running-the-signature-benchmark}{%
+\subsubsection{Running the signature
+benchmark}\label{running-the-signature-benchmark}}
+
+In a serial terminal, run the following command:
+
+\texttt{AT+B}
+
+\hypertarget{memory-footprint}{%
+\subsection{Memory footprint}\label{memory-footprint}}
+
+\hypertarget{overall-usage}{%
+\subsubsection{Overall usage}\label{overall-usage}}
+
+The memory footprint is calculated by substracting the ammount of memory
+used by a blank application from the memory used by the application with
+the cryptographic library.
+
+\begin{longtable}[]{@{}llllll@{}}
+\toprule
+Compiler Preset & Variant & Flash (bytes) & DTCRAM (bytes) & BUF RAM
+(bytes) & Total RAM (bytes)\tabularnewline
+\midrule
+\endhead
+Release & Gaussian distr. & 73696 & 8344 & 225856 &
+234200\tabularnewline
+MinSizeRel & Gaussian distr. & 68316 & 8344 & 225853 &
+234197\tabularnewline
+Release & Uniform distr. & 73340 & 8344 & 225856 & 234200\tabularnewline
+MinSizeRel & Uniform distr. & 68204 & 8344 & 225853 &
+234197\tabularnewline
+\bottomrule
+\end{longtable}
+
+As one may see, the differences between the variants are not significant
+and the MinSizeRel preset obviously uses less FLASH memory. On average
+\textasciitilde235kB of RAM and \textasciitilde70kB of FLASH memory is
+used by the cryptographic library.
+
+\hypertarget{detailed-flash-usage-per-function}{%
+\subsubsection{Detailed FLASH usage per
+function}\label{detailed-flash-usage-per-function}}
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule
+File & Function & FLASH (bytes: hex) & FLASH (kB)\tabularnewline
+\midrule
+\endhead
+crypto\_hash\_sha512.c & crypto\_hashblocks\_sha512 & 00007c80 &
+000031.5\tabularnewline
+crypto\_hash\_sha512.c & crypto\_hash\_sha512 & 00000158 &
+000000.3\tabularnewline
+crypto\_sream\_salsa20.c & crypto\_core\_salsa20 & 0000038c &
+000000.9\tabularnewline
+crypto\_sream\_salsa20.c & crypto\_sream & 000000ec &
+000000.2\tabularnewline
+DGS.c.obj & DGS & 00000188 & 000000.4\tabularnewline
+DGS.c.obj & DDGS & 00000110 & 000000.3\tabularnewline
+fastrandombytes.c.obj & fastrandombytes & 0000007c &
+000000.2\tabularnewline
+fastrandombytes.c.obj & rng\_cleanup & 00000040 &
+000000.1\tabularnewline
+fastrandombytes.c.obj & rng\_init & 00000088 & 000000.2\tabularnewline
+fastrandombytes.c.obj & rng\_uint16 & 000000b0 & 000000.2\tabularnewline
+fastrandombytes.c.obj & rng\_uint64 & 0000012c & 000000.3\tabularnewline
+fastrandombytes.c.obj & randpool & 00001000 & 000004.0\tabularnewline
+fastrandombytes.c.obj & randpos & 00000002 & 000000.0\tabularnewline
+misc.c.obj & max\_norm & 00000040 & 000000.1\tabularnewline
+misc.c.obj & get\_scala & 00000050 & 000000.1\tabularnewline
+NTT.c.obj & extendedEuclid & 000000f0 & 000000.2\tabularnewline
+NTT.c.obj & NTT & 000001bc & 000000.4\tabularnewline
+NTT.c.obj & Inv\_NTT & 00000150 & 000000.3\tabularnewline
+NTT.c.obj & InvMod & 0000017c & 000000.3\tabularnewline
+packing.c.obj & tri\_to\_string & 0000016c & 000000.3\tabularnewline
+packing.c.obj & string\_to\_tri & 00000290 & 000000.6\tabularnewline
+packing.c.obj & pack\_public\_key & 0000008c & 000000.2\tabularnewline
+packing.c.obj & unpack\_public\_key & 00000064 & 000000.1\tabularnewline
+packing.c.obj & pack\_secret\_key & 000001fc & 000000.5\tabularnewline
+packing.c.obj & unpack\_secret\_key & 0000020c & 000000.5\tabularnewline
+param.c.obj & pq\_get\_param\_set\_by\_id & 0000001c &
+000000.0\tabularnewline
+poly.c.obj & karatsuba & 00000288 & 000000.7\tabularnewline
+poly.c.obj & is\_balance & 0000001c & 000000.0\tabularnewline
+poly.c.obj & pol\_gen\_flat & 000004b8 & 000001.2\tabularnewline
+poly.c.obj & binary\_poly\_gen & 00000214 & 000000.5\tabularnewline
+poly.c.obj & pol\_unidrnd\_pZ & 000000b0 & 000000.2\tabularnewline
+poly.c.obj & pol\_unidrnd & 00000090 & 000000.1\tabularnewline
+poly.c.obj & pol\_unidrnd\_with\_seed & 000000cc &
+000000.3\tabularnewline
+poly.c.obj & pol\_inv\_mod2 & 00000330 & 000000.8\tabularnewline
+poly.c.obj & cmod & 0000004c & 000000.1\tabularnewline
+poly.c.obj & pol\_mul\_coefficients & 000000c4 & 000000.2\tabularnewline
+poly.c.obj & pol\_mul\_mod\_p & 000000d0 & 000000.2\tabularnewline
+pqNTRUSign.c.obj & normf & 00000108 & 000000.3\tabularnewline
+pqNTRUSign.c.obj & keygen & 00000148 & 000000.3\tabularnewline
+pqNTRUSign.c.obj & rejection\_sampling & 000000ec &
+000000.2\tabularnewline
+pqNTRUSign.c.obj & challenge & 000000f4 & 000000.2\tabularnewline
+pqNTRUSign.c.obj & sign & 000002bc & 000000.7\tabularnewline
+pqNTRUSign.c.obj & verify & 00000130 & 000000.3\tabularnewline
+rng.c.obj & \_32\_randombytes & 00000040 & 000000.1\tabularnewline
+rng.c.obj & rng\_init & 00000088 & 000000.2\tabularnewline
+rng.c.obj & rng\_uint16 & 000000b0 & 000000.2\tabularnewline
+rng.c.obj & rng\_uint64 & 0000012c & 000000.3\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{per-component-sums}{%
+\paragraph{Per component sums}\label{per-component-sums}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+File & FLASH (kB)\tabularnewline
+\midrule
+\endhead
+crypto\_hash\_sha512.c & 000031.8\tabularnewline
+crypto\_sream\_salsa20.c & 000001.1\tabularnewline
+DGS.c.obj & 000000.7\tabularnewline
+fastrandombytes.c.obj & 000004.5\tabularnewline
+misc.c.obj & 000000.2\tabularnewline
+NTT.c.obj & 000000.9\tabularnewline
+packing.c.obj & 000001.2\tabularnewline
+param.c.obj & 000000.0\tabularnewline
+poly.c.obj & 000004.6\tabularnewline
+pqNTRUSign.c.obj & 000001.5\tabularnewline
+rng.c.obj & 000000.6\tabularnewline
+\textbf{TOTAL} & 000047.1\tabularnewline
+\bottomrule
+\end{longtable}
+
+As one can easily see, the SHA512 implementation takes the most FLASH
+memory. Using the hardware hash module would be a good idea to reduce
+the memory footprint.
+
+The resulting size would be arround 15kB for functions + 16kB of
+constants defined in the \texttt{param.c} file.
+
+\hypertarget{script-used}{%
+\paragraph{Script used}\label{script-used}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{for} \FunctionTok{file}\NormalTok{ in *.obj}\KeywordTok{;}
+\KeywordTok{do} \BuiltInTok{echo} \VariableTok{$file}\KeywordTok{;}
+\ExtensionTok{arm{-}none{-}eabi{-}objdump}\NormalTok{ {-}h }\VariableTok{$file}  \KeywordTok{|} \FunctionTok{tail}\NormalTok{ +6 }\KeywordTok{|} \FunctionTok{grep}\NormalTok{ {-}E }\StringTok{"^{}.*[0{-}9]"} \KeywordTok{|} \textbackslash
+\FunctionTok{awk} \StringTok{\textquotesingle{}\{print $2 " " $3\}\textquotesingle{}}\KeywordTok{;} \KeywordTok{done} \KeywordTok{|} \ExtensionTok{column}\NormalTok{ {-}t }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{other-findings}{%
+\subsection{Other findings}\label{other-findings}}
+
+\hypertarget{broken-signatures}{%
+\subsubsection{Broken signatures}\label{broken-signatures}}
+
+An interesting observation is that for some combinations of generated
+keys and messages, the signature generation may result in a signature
+that is not valid. This is circumvented by checking the signature before
+sending it back to the caller. It is therefore possible to receive an
+error response even if correct parameters were passed. Researching the
+reason behind this behaviour is out of the scope of this project as a
+workaround is already in place.
+
+\hypertarget{lack-of-memory-safety-in-crypto_sign_open}{%
+\subsubsection{\texorpdfstring{Lack of memory safety in
+\texttt{crypto\_sign\_open()}}{Lack of memory safety in crypto\_sign\_open()}}\label{lack-of-memory-safety-in-crypto_sign_open}}
+
+So apparently the \texttt{crypto\_sign\_open()} function will cause out
+of bounds memory access if the supplied signature is misaligned. This
+issue has been fixed in \texttt{unpack\_public\_key()} by adding a check
+if the returned pointer is not \texttt{NULL}. I hope there are no more
+eastereggs like this one (it bricked the device until a full reflashing
+was performed).
+
+\hypertarget{benchmarks-for-falcon-512}{%
+\section{Benchmarks for Falcon-512}\label{benchmarks-for-falcon-512}}
+
+\hypertarget{setup-1}{%
+\subsection{Setup}\label{setup-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Device:} NUCLEO-H753ZI
+\item
+  \textbf{Compiler:} arm-none-eabi-gcc 10.3.1
+\item
+  \textbf{Public key size:} 897
+\item
+  \textbf{Private key size:} 1281
+\item
+  \textbf{AES equivalent:} 128 \textit{(NIST 1)}
+\end{itemize}
+
+Communication as in \url{pqNTRUSign.md}.
+
+\hypertarget{key-generation-over-50-runs}{%
+\subsection{Key generation over 50
+runs}\label{key-generation-over-50-runs}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Compiler Preset & Time (ms)\tabularnewline
+\midrule
+\endhead
+Release & 266\tabularnewline
+MinSizeRel & 308\tabularnewline
+Debug & 808\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{signature-generation-over-50-runs}{%
+\subsection{Signature generation over 50
+runs}\label{signature-generation-over-50-runs}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Compiler Preset & Time (ms)\tabularnewline
+\midrule
+\endhead
+Release & 61\tabularnewline
+MinSizeRel & 61\tabularnewline
+Debug & 101\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{memory-footprint-1}{%
+\subsection{Memory footprint}\label{memory-footprint-1}}
+
+\hypertarget{overall-usage-1}{%
+\subsubsection{Overall usage}\label{overall-usage-1}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+Compiler Preset & FLASH (bytes) & Total RAM (bytes)\tabularnewline
+\midrule
+\endhead
+Release & 76292 & 64514\tabularnewline
+MinSizeRel & 60212 & 64514\tabularnewline
+Debug & 82048 & 64538\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{size-of-individual-symbols-in-object-files-release}{%
+\subsubsection{Size of individual symbols in object files
+(Release)}\label{size-of-individual-symbols-in-object-files-release}}
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule
+File & Symbol & FLASH (bytes: hex) & FLASH (kB)\tabularnewline
+\midrule
+\endhead
+api.c.obj & crypto\_sign\_keypair & 000000f0 & 0.23\tabularnewline
+api.c.obj & crypto\_sign & 000001f0 & 0.48\tabularnewline
+api.c.obj & crypto\_sign\_open & 000000e4 & 0.22\tabularnewline
+codec.c.obj & falcon\_inner\_modq\_encode & 00000094 &
+0.15\tabularnewline
+codec.c.obj & falcon\_inner\_modq\_decode & 00000070 &
+0.11\tabularnewline
+codec.c.obj & falcon\_inner\_trim\_i8\_encode & 000000b8 &
+0.18\tabularnewline
+codec.c.obj & falcon\_inner\_trim\_i8\_decode & 000000b4 &
+0.18\tabularnewline
+codec.c.obj & falcon\_inner\_comp\_encode & 000000c8 &
+0.19\tabularnewline
+codec.c.obj & falcon\_inner\_comp\_decode & 0000009c &
+0.16\tabularnewline
+codec.c.obj & falcon\_inner\_max\_FG\_bits & 0000000b &
+0.01\tabularnewline
+codec.c.obj & falcon\_inner\_max\_fg\_bits & 0000000b &
+0.01\tabularnewline
+common.c.obj & falcon\_inner\_hash\_to\_point\_vartime & 00000074 &
+0.12\tabularnewline
+common.c.obj & falcon\_inner\_is\_short & 00000050 & 0.08\tabularnewline
+common.c.obj & falcon\_inner\_is\_short\_half & 00000048 &
+0.07\tabularnewline
+common.c.obj & l2bound & 0000002c & 0.04\tabularnewline
+common.c.obj & overtab.0 & 00000016 & 0.03\tabularnewline
+fft.c.obj & falcon\_inner\_FFT & 000001d0 & 0.45\tabularnewline
+fft.c.obj & falcon\_inner\_iFFT & 0000021c & 0.53\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_add & 0000002c & 0.04\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_sub & 00000030 & 0.05\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_neg & 00000020 & 0.03\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_adj\_fft & 00000034 &
+0.05\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_mul\_fft & 000000c8 &
+0.20\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_muladj\_fft & 000000d4 &
+0.21\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_mulselfadj\_fft & 00000078 &
+0.12\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_mulconst & 00000030 &
+0.05\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_invnorm2\_fft & 000000ec &
+0.23\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_add\_muladj\_fft & 000001a8 &
+0.41\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_mul\_autoadj\_fft & 00000050 &
+0.08\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_div\_autoadj\_fft & 0000006c &
+0.11\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_LDL\_fft & 0000020c &
+0.51\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_split\_fft & 000001e0 &
+0.47\tabularnewline
+fft.c.obj & falcon\_inner\_poly\_merge\_fft & 00000174 &
+0.37\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_scaled & 00000084 & 0.13\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_add & 0000013c & 0.31\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_mul & 000000e8 & 0.23\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_div & 00000640 & 1.56\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_sqrt & 00000748 & 1.82\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_expm\_p63 & 000004e8 &
+1.23\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_gm\_tab & 00004000 &
+16.00\tabularnewline
+fpr.c.obj & falcon\_inner\_fpr\_p2\_tab & 00000058 & 0.09\tabularnewline
+keygen.c.obj & modp\_R2 & 000000d4 & 0.21\tabularnewline
+keygen.c.obj & modp\_mkgm2 & 0000034c & 0.82\tabularnewline
+keygen.c.obj & poly\_sub\_scaled & 00000144 & 0.33\tabularnewline
+keygen.c.obj & poly\_small\_mkgauss & 00000110 & 0.26\tabularnewline
+keygen.c.obj & poly\_big\_to\_fp & 000000f8 & 0.25\tabularnewline
+keygen.c.obj & modp\_iNTT2\_ext.part.0 & 0000021c & 0.53\tabularnewline
+keygen.c.obj & modp\_NTT2\_ext.part.0.constprop.0 & 000000e0 &
+0.22\tabularnewline
+keygen.c.obj & modp\_iNTT2\_ext.part.0.constprop.0 & 0000013c &
+0.31\tabularnewline
+keygen.c.obj & modp\_iNTT2\_ext.part.0.constprop.1 & 00000130 &
+0.30\tabularnewline
+keygen.c.obj & poly\_big\_to\_fp.constprop.0 & 00000080 &
+0.13\tabularnewline
+keygen.c.obj & poly\_big\_to\_fp.constprop.1 & 000000b4 &
+0.18\tabularnewline
+keygen.c.obj & zint\_rebuild\_CRT.constprop.3 & 00000260 &
+0.60\tabularnewline
+keygen.c.obj & poly\_sub\_scaled\_ntt & 00000498 & 1.15\tabularnewline
+keygen.c.obj & zint\_co\_reduce\_mod & 00000228 & 0.54\tabularnewline
+keygen.c.obj & make\_fg & 00000a40 & 2.56\tabularnewline
+keygen.c.obj & solve\_NTRU\_intermediate & 00000f24 &
+3.79\tabularnewline
+keygen.c.obj & falcon\_inner\_keygen & 00002d1c & 11.28\tabularnewline
+keygen.c.obj & BITLENGTH & 00000058 & 0.09\tabularnewline
+keygen.c.obj & MAX\_BL\_LARGE & 00000028 & 0.04\tabularnewline
+keygen.c.obj & MAX\_BL\_SMALL & 0000002c & 0.05\tabularnewline
+keygen.c.obj & PRIMES & 00001878 & 6.12\tabularnewline
+keygen.c.obj & REV10 & 00000800 & 2.00\tabularnewline
+keygen.c.obj & gauss\_1024\_12289 & 000000d8 & 0.21\tabularnewline
+rng.c.obj & falcon\_inner\_prng\_refill & 00000344 & 0.82\tabularnewline
+rng.c.obj & falcon\_inner\_prng\_init & 0000001c & 0.03\tabularnewline
+shake.c.obj & process\_block & 000008b4 & 2.18\tabularnewline
+shake.c.obj & falcon\_inner\_i\_shake256\_init & 00000018 &
+0.03\tabularnewline
+shake.c.obj & falcon\_inner\_i\_shake256\_inject & 000000d0 &
+0.20\tabularnewline
+shake.c.obj & falcon\_inner\_i\_shake256\_flip & 00000030 &
+0.05\tabularnewline
+shake.c.obj & falcon\_inner\_i\_shake256\_extract & 00000060 &
+0.10\tabularnewline
+sign.c.obj & falcon\_inner\_gaussian0\_sampler & 000000c0 &
+0.19\tabularnewline
+sign.c.obj & falcon\_inner\_sampler & 000002d0 & 0.70\tabularnewline
+sign.c.obj & ffSampling\_fft\_dyntree.constprop.0 & 000001f0 &
+0.48\tabularnewline
+sign.c.obj & falcon\_inner\_sign\_dyn & 00000770 & 1.86\tabularnewline
+sign.c.obj & dist.0 & 000000d8 & 0.22\tabularnewline
+sign.c.obj & fpr\_inv\_sigma & 00000058 & 0.09\tabularnewline
+sign.c.obj & fpr\_sigma\_min & 00000058 & 0.09\tabularnewline
+vrfy.c.obj & mq\_NTT & 000000d4 & 0.21\tabularnewline
+vrfy.c.obj & mq\_iNTT & 00000138 & 0.30\tabularnewline
+vrfy.c.obj & falcon\_inner\_to\_ntt\_monty & 00000054 &
+0.09\tabularnewline
+vrfy.c.obj & falcon\_inner\_verify\_raw & 00000100 & 0.25\tabularnewline
+vrfy.c.obj & falcon\_inner\_compute\_public & 00000364 &
+0.85\tabularnewline
+vrfy.c.obj & falcon\_inner\_complete\_private & 00000458 &
+1.09\tabularnewline
+vrfy.c.obj & GMb & 00000800 & 2.00\tabularnewline
+vrfy.c.obj & iGMb & 00000800 & 2.00\tabularnewline
+\textbf{TOTAL} & & & \textbf{73.34}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{per-component-sums-release}{%
+\subsubsection{Per component sums
+(Release)}\label{per-component-sums-release}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+File & FLASH (kB)\tabularnewline
+\midrule
+\endhead
+api.c.obj & 0.93\tabularnewline
+codec.c.obj & 0.99\tabularnewline
+common.c.obj & 0.34\tabularnewline
+fft.c.obj & 3.91\tabularnewline
+fpr.c.obj & 21.37\tabularnewline
+keygen.c.obj & 31.97\tabularnewline
+rng.c.obj & 0.85\tabularnewline
+shake.c.obj & 2.56\tabularnewline
+sign.c.obj & 3.63\tabularnewline
+vrfy.c.obj & 6.79\tabularnewline
+\textbf{TOTAL} & \textbf{73.34}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{benchmarks-for-falcon-1024}{%
+\section{Benchmarks for Falcon-1024}\label{benchmarks-for-falcon-1024}}
+
+\hypertarget{setup-2}{%
+\subsection{Setup}\label{setup-2}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Device:} NUCLEO-H753ZI
+\item
+  \textbf{Compiler:} arm-none-eabi-gcc 10.3.1
+\item
+  \textbf{Public key size:} 1793
+\item
+  \textbf{Private key size:} 2305
+\item
+  \textbf{AES equivalent:} 256 \textit{(NIST 5)}
+\end{itemize}
+
+Communication as in \url{pqNTRUSign.md}.
+
+\hypertarget{key-generation-over-50-runs-1}{%
+\subsection{Key generation over 50
+runs}\label{key-generation-over-50-runs-1}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Compiler Preset & Time (ms)\tabularnewline
+\midrule
+\endhead
+Release & 711\tabularnewline
+MinSizeRel & 853\tabularnewline
+Debug & 2504\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{signature-generation-over-50-runs-1}{%
+\subsection{Signature generation over 50
+runs}\label{signature-generation-over-50-runs-1}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Compiler Preset & Time (ms)\tabularnewline
+\midrule
+\endhead
+Release & 134\tabularnewline
+MinSizeRel & 135\tabularnewline
+Debug & 218\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{memory-footprint-2}{%
+\subsection{Memory footprint}\label{memory-footprint-2}}
+
+\hypertarget{overall-usage-2}{%
+\subsubsection{Overall usage}\label{overall-usage-2}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+Compiler Preset & Flash (bytes) & Total RAM (bytes)\tabularnewline
+\midrule
+\endhead
+Release & 76400 & 128008\tabularnewline
+MinSizeRel & 60280 & 128002\tabularnewline
+Debug & 82132 & 128005\tabularnewline
+\bottomrule
+\end{longtable}
+
+As the memory usage pattern is expected to be similar to
+\href{falcon-512.md}{falcon-512}, \texttt{.obj} file analysis is omitted
+(buffer sizes will change and that will mostly be it).
+
+\end{document}

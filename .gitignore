@@ -37,3 +37,11 @@ Makefile
 # Miscellaneous
 .DS_Store
 Thumbs.db
+*.log
+*.gz
+
+# LaTeX
+*.pdf
+*.aux
+*.ps
+*.dvi
