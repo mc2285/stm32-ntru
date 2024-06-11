@@ -99,14 +99,14 @@
 \begin{document}
 
 \hypertarget{title}{%
-\section{Post-quantum cryptography on ARM Cortex M7: a report}
+\part{Post-quantum cryptography on ARM Cortex M7: a report}
 \label{title}}
 
 The aim of this report is to evaluate the results of an experiment regarding implementing PQ cryptography
 in an embedded system and to analyse whether it is currently feasible resource-wise to employ such mechanisms in a practical application.
 
 \hypertarget{abstract}{%
-\section{Abstract}
+\part{Abstract}
 \label{abstract}}
 
 With the introduction of Shor's algorithm\footnote{\url{https://en.wikipedia.org/wiki/Shor\%27s_algorithm}}
@@ -117,7 +117,7 @@ Shor's algorithm to solve any of the aforementioned problems, it is probable tha
 This in turn creates need for future-proof algorithms that are known to be resistant to Shor's algorithm shall a quantum computer powerful enough to threaten the status-quo of cryptography be ever built.
 
 \hypertarget{urgency}{%
-\subsection{Urgency of the matter}\label{urgency}}
+\section{Urgency of the matter}\label{urgency}}
 
 Even though one may feel tempted to assume that, given that the threat from quantum computers is distant,
 there is currently no need to bother. While such an assumption is not necessarily wrong for most
@@ -126,7 +126,7 @@ protection from decryption of past cipher-texts in the future\footnote{\url{http
 What is more, this future may actually be less distant than it seems\footnote{\url{https://semiengineering.com/the-race-toward-quantum-advantage}}.
 
 \hypertarget{possible-resolutions}{%
-\subsection{Solutions at hand}\label{possible-resolutions}}
+\section{Solutions at hand}\label{possible-resolutions}}
 
 Even though practical quantum computers are yet to arrive, cryptography resistant to Shor's algorithm is already out in the wild. A performance and key size penalty relative to ECDSA is
 present\footnote{\url{https://blog.cloudflare.com/nist-post-quantum-surprise\#digital-signatures}},
@@ -139,7 +139,7 @@ While it may seem trivial, having a degree of resistance to common mistakes is a
 safeguards against broken PRNG's in mind\footnote{\url{https://en.wikipedia.org/wiki/EdDSA\#Secure_coding}}).
 
 \hypertarget{embedded-options}{%
-\subsection{Options for the embedded world}\label{embedded-options}}
+\section{Options for the embedded world}\label{embedded-options}}
 
 The strongest constrain in the world of embedded devices is memory. Operations with high computational
 cost can be offloaded to special-case peripheral modules (which will arise sooner or later as it is
@@ -150,13 +150,73 @@ performance and introduces additional failure points.
 Due to the above factors CRYSTALS-Dilithium and SPHINCS+, although certainly possible to implement even
 for the slightly smaller Cortex M4 cores\footnote{\url{https://github.com/mupq/pqm4}}, are in an
 extremely disadvantageous position owing to the respectively large and gargantuan amounts of memory
-required to hold just the computed signature. The author of this document acknowledges that CRYSTALS-Dilithium is the fastest algorithm and that SPHINCS+ provides methods which allow not to hold the whole
-signature in memory at once. Regardless of that, algorithms which have no need for workarounds to this
-problem are more appealing and were therefore considered in the experiment.
+required to hold just the computed signature. The author of this document acknowledges that CRYSTALS-Dilithium is the one of the fastest algorithms and that SPHINCS+ provides methods which allow to avoid holding the whole signature in memory at once. Regardless of that, algorithms which have no need for workarounds to this problem are more appealing and were therefore considered in the experiment.
 
 \hypertarget{the-experiment}{%
-\section{The experiment}
+\part{The experiment}
 \label{the-experiment}}
+
+The experiment involved porting pqNTRUSign and Falcon to the micro-controller from NIST submission packages, to verify if the code operates properly and to judge the code's overall quality in terms of readability, documentation, memory safety and following general programming best practices.
+
+The second part was to design a simple communication scheme based on \textit{AT} commands (normally used for controlling LTE and Bluetooth communication modules) so as to allow transmitting messages and receiving signatures as hex-encoded strings (for simplicity). The communication scheme also includes miscellaneous commands used for reading the keys and running benchmarks.
+
+The third and final part was comparing performance and memory usage (also by each software component).
+
+\hypertarget{at-commands}{%
+\section{Command description}\label{at-commands}}
+
+The communication scheme designed was composed of the following commands:
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule
+Command & Arguments & Purpose\tabularnewline
+\midrule
+\endhead
+\textit{AT+S} & \textit{<hex\_string>} &
+signs the \textit{<hex\_string>} and returns the signed data as \textit{<hex\_string>}
+\tabularnewline
+\textit{AT+V} & \textit{<hex\_string>} &
+verifies the \textit{<hex\_string>} signed message
+\tabularnewline
+\textit{AT+I} & &
+outputs maximum message size and currently used algorithm
+\tabularnewline
+\textit{AT+G} & &
+generates a new key pair
+\tabularnewline
+\textit{AT+P} & &
+returns public key as \textit{<hex\_string>}
+\tabularnewline
+\textit{AT+K} & &
+returns private key as \textit{<hex\_string>}
+\tabularnewline
+\textit{AT+R} & &
+runs keygen benchmark and returns average time per keygen in \textit{ms}
+\tabularnewline
+\textit{AT+B} & &
+runs signing benchmark and returns average time per signature in \textit{ms}
+\tabularnewline
+\bottomrule
+\end{longtable}
+
+\hypertarget{port-results}{%
+\section{Results of the porting process}\label{port-results}}
+
+The author was successful in porting both the libraries onto the target architecture (Cortex M7). Falcon was a lot easier to do since it included a variant targeting Cortex M specifically and only a
+reallocation of the temporary buffers to outer memory regions was required as the particular chip used featured multiple memory banks. pqNTRUSign was harder yet manageable. The hardware RNG module equipped in the chip was also successfully employed.
+
+\hypertarget{code-quality}{%
+\section{Code quality opinions}\label{code-quality}}
+
+While the author of this document is not competent enough to judge the quality of implemented mathematical functions, it was nonetheless possible to notice that pqNTRUSign code was not free from
+common programming mistakes like returning pointers to local variables, omitting \textit{const} from large read-only chunks of data, boilerplate pointer manipulation or, the worst of all, accepting a returned \textit{NULL} pointer without any safeguards and happily writing some 32kB there.
+This particular issue has been reported to the maintainer\footnote{\url{https://github.com/zhenfeizhang/pqNTRUSign/pull/2}}.
+Comments were also hard to come by and a standard library function was used for getting a random number once. All these factors altogether make one feel uncertain whether the original code can be trusted.
+
+On the other hand, Falcon mostly just worked\textsuperscript{TM}. There were no compiler warnings and the API to implement requesting random bytes from hardware RNG was obvious. The code was well documented and programmed in a consistent style which made one felt assured that the designer knew what he was doing.
+
+\hypertarget{benchmarks-all}{%
+\part{Benchmarks and memory analysis}\label{benchmarks-all}}
 
 \hypertarget{benchmarks-for-pqntrusign}{%
 \section{Benchmarks for pqNTRUSign}\label{benchmarks-for-pqntrusign}}
@@ -716,5 +776,19 @@ Debug & 82132 & 128005\tabularnewline
 As the memory usage pattern is expected to be similar to
 \href{falcon-512.md}{falcon-512}, \texttt{.obj} file analysis is omitted
 (buffer sizes will change and that will mostly be it).
+
+\hypertarget{end}{%
+\part{Closing thoughts}
+\label{end}}
+
+\hypertarget{pq-on-embedded}{%
+\section{Is PQ cryptography practical on embedded systems}\label{pq-on-embedded}}
+
+It certainly is. Falcon-512 was capable of creating a signature in as few as 61 milliseconds which is a delay completely unnoticeable for an average human. It was possible to sign messages as large as 4kB while using a wasteful hex encoding method and with less than 30\% of RAM and 5\% of program memory used for the application together with the cryptography. Although quite a large micro-controller was used, the code could easily fit into a two times smaller one.
+
+\hypertarget{winner}{%
+\section{Which of the algorithms tested performed better}\label{winner}}
+
+Falcon. With twice the security it was still ten times faster and required half the RAM with a similar program memory usage even though some 20kB where sacrificed to implement floating-point arithmetic in a known-secure way. What is more, the reference code seemed more well-maintained.
 
 \end{document}
