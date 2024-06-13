@@ -267,7 +267,7 @@ int main(void)
       else if (strncmp(rx_buffer, "AT+V ", AT_COMMAND_LENGTH + 1) == 0)
       {
         uint64_t len = strlen(rx_buffer + AT_COMMAND_LENGTH + 1);
-        if (len <= CRYPTO_BYTES * 2 || expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, rx_buffer, len) != 0)
+        if (expand_hex_string(rx_buffer + AT_COMMAND_LENGTH + 1, rx_buffer, len) != 0)
         {
           schedule_overflow_message();
           continue;
